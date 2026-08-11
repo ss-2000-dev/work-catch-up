@@ -1,0 +1,26 @@
+{
+  "name": "front-end-catchup-sample",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "mock-api": "json-server --watch db.json --port 4000"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "jszip": "^3.10.1",
+    "papaparse": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/papaparse": "^5.3.14",
+    "@vitejs/plugin-react": "^4.3.1",
+    "json-server": "^0.17.4",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.1"
+  }
+}

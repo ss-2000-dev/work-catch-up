@@ -1,0 +1,27 @@
+{
+  "tickets": [
+    {
+      "title": "スケジュール画面のバグ修正",
+      "description": "ガントチャートの日付ずれを直すテスト",
+      "assignee": "鈴木",
+      "status": "done",
+      "id": "1"
+    },
+    {
+      "id": "2",
+      "title": "チケット一覧のページング対応",
+      "description": "件数が増えたのでページングを追加する",
+      "status": "todo",
+      "assignee": "佐藤",
+      "createdAt": "2026-08-05T09:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "title": "APIレスポンスの型定義見直し",
+      "description": "バックエンドの変更に追従する",
+      "status": "done",
+      "assignee": "田中",
+      "createdAt": "2026-07-28T09:00:00.000Z"
+    }
+  ]
+}
