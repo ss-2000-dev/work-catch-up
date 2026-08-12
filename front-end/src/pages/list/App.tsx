@@ -43,6 +43,8 @@ export function App() {
 
       <hr style={{ margin: "24px 0" }} />
       <a href="/upload">CSV集計ツールを開く</a>
+      <br />
+      <a href="/points-exchange">ポイント交換画面を開く</a>
     </div>
   );
 }

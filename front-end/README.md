@@ -32,6 +32,7 @@ npm run dev        # ターミナル2: フロント(vite)を起動
 | `/tickets/:id` | `tickets/detail.html` | `src/pages/detail/` (詳細) |
 | `/tickets/:id/edit` | `tickets/edit.html` | `src/pages/edit/` (編集) |
 | `/upload` | `upload.html` | `src/pages/upload/` (CSV集計) |
+| `/points-exchange` | `points-exchange.html` | `src/pages/pointsExchange/` (ポイント交換) |
 
 `/tickets/1`のような動的な部分を含むキレイなURLにするため、開発サーバー(`vite.config.ts`の`cleanUrlRewrite`プラグイン)で
 リクエストURLを対応する静的HTMLにリライトしています。ページ内では、SPAルーターの`useParams`の代わりに
@@ -63,6 +64,23 @@ zip化されたCSVをアップロードすると、ブラウザ内で解凍・�
 - 集計: C列(`src/utils/parseZipCsv.ts`の`POINT_COLUMN_INDEX`)を仮想ポイントとみなして合計、行数をユーザー数として集計
 - 表示: `src/components/Modal.tsx`(汎用モーダル)に結果を表示
 
+## ポイント交換画面(`/points-exchange`)について
+
+「入力中にリアルタイムで3桁区切りカンマを付けるべきか、確認画面だけで十分か」を比較検討するためのサンプルです。MUI(`@mui/material`)と`react-number-format`を導入しています(このプロジェクトで初めてUIライブラリを使う画面)。
+
+**入力仕様**
+- 交換できるポイント数は100〜12,500の範囲、かつ100ポイント単位のみ(0や13,000は無効値)
+- 条件を満たさない入力にはエラーメッセージを表示する
+
+**パターンA1・A2・B**(画面上部のトグルで切り替え)
+- パターンA1([`src/components/PointsExchangeFieldPatternA1.tsx`](src/components/PointsExchangeFieldPatternA1.tsx)): `react-number-format`の`NumericFormat`をMUIの`TextField`に被せ、入力中からカンマ整形する(ライブラリ利用)
+- パターンA2([`src/components/PointsExchangeFieldPatternA2.tsx`](src/components/PointsExchangeFieldPatternA2.tsx)): ライブラリを使わず、カーソル位置を自前で制御しながら入力中にカンマ整形する。A1との実装量・複雑さの差を比較するためのもの
+- パターンB([`src/components/PointsExchangeFieldPatternB.tsx`](src/components/PointsExchangeFieldPatternB.tsx)): 入力中は生の数字のまま、確認ボタンを押した結果表示でのみ`toLocaleString()`でカンマ整形する
+
+バリデーションロジックは[`src/utils/validatePointsExchange.ts`](src/utils/validatePointsExchange.ts)にA1/A2/B共通で切り出している。
+
+**A1とA2の違いから分かること**: A2(自前実装)は、数字の削除・挿入のたびに「フォーマット済み文字列のどこにカーソルを戻すか」を自力で計算する必要があり、A1(ライブラリ利用)よりコード量・考慮すべきケースが明確に増える。この体感差は、実務でライブラリを使うか自前実装するかの判断材料になる。
+
 ## ディレクトリ構成
 
 ```
@@ -71,17 +89,22 @@ tickets/new.html         新規作成ページのHTML
 tickets/detail.html      詳細ページのHTML
 tickets/edit.html        編集ページのHTML
 upload.html              CSV集計ページのHTML
+points-exchange.html     ポイント交換ページのHTML
 src/
   pages/
-    list/   (App.tsx, main.tsx)   一覧ページ
-    new/    (App.tsx, main.tsx)   新規作成ページ
-    detail/ (App.tsx, main.tsx)   詳細ページ
-    edit/   (App.tsx, main.tsx)   編集ページ
-    upload/ (App.tsx, main.tsx)   CSV集計ページ
+    list/           (App.tsx, main.tsx)   一覧ページ
+    new/            (App.tsx, main.tsx)   新規作成ページ
+    detail/         (App.tsx, main.tsx)   詳細ページ
+    edit/           (App.tsx, main.tsx)   編集ページ
+    upload/         (App.tsx, main.tsx)   CSV集計ページ
+    pointsExchange/ (App.tsx, main.tsx)   ポイント交換ページ
   components/
     TicketForm.tsx         新規作成・編集で共用するフォーム部品
     TicketStatusBadge.tsx
     Modal.tsx               汎用モーダル
+    PointsExchangeFieldPatternA1.tsx 入力中にカンマ整形(react-number-format利用)
+    PointsExchangeFieldPatternA2.tsx 入力中にカンマ整形(自前実装)
+    PointsExchangeFieldPatternB.tsx  確認画面のみカンマ整形するパターン
   api/
     client.ts               fetch共通処理
     ticketApi.ts             チケットAPI呼び出し関数
@@ -89,6 +112,7 @@ src/
   utils/
     path.ts                URLからticket idを取り出すヘルパー
     parseZipCsv.ts           zip解凍・CSVパース・集計ロジック
+    validatePointsExchange.ts ポイント交換の入力バリデーション
 ```
 
 一覧 → 詳細 → 編集、一覧 → 新規作成、という一通りの画面遷移とAPI呼び出し(CRUD)を、

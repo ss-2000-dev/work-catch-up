@@ -24,6 +24,8 @@ function cleanUrlRewrite(): Plugin {
           }
         } else if (parts.length === 1 && parts[0] === "upload") {
           req.url = "/upload.html";
+        } else if (parts.length === 1 && parts[0] === "points-exchange") {
+          req.url = "/points-exchange.html";
         }
         next();
       });
@@ -42,6 +44,7 @@ export default defineConfig({
         ticketDetail: resolve(__dirname, "tickets/detail.html"),
         ticketEdit: resolve(__dirname, "tickets/edit.html"),
         upload: resolve(__dirname, "upload.html"),
+        pointsExchange: resolve(__dirname, "points-exchange.html"),
       },
     },
   },
